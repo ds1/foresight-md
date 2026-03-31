@@ -92,6 +92,7 @@ and structured analytic techniques
   - [How Signals Are Stored](#how-signals-are-stored)
   - [The Driver Graph](#the-driver-graph)
   - [Querying Your Signals](#querying-your-signals)
+  - [The Visual Dashboard](#the-visual-dashboard)
   - [Signal Maintenance](#signal-maintenance)
 - [Part 8: Automated Intelligence](#part-8-automated-intelligence)
   - [The Seven Analysis Passes](#the-seven-analysis-passes)
@@ -340,7 +341,7 @@ The skill lives entirely in your Claude Code configuration directory:
 
 ```
 ~/.claude/commands/
-├── foresight.md                    # The main skill prompt (210 lines)
+├── foresight.md                    # The main skill prompt
 └── foresight/
     ├── ref/                        # Compressed methodology references
     │   ├── frameworks.md           # Named frameworks with steps
@@ -359,8 +360,10 @@ The skill lives entirely in your Claude Code configuration directory:
     │   ├── graph.json              # Driver clusters + signal connections
     │   ├── insights.json           # Auto-generated patterns and alerts
     │   ├── index.md                # Human-readable overview
+    │   ├── generate-dashboard.js   # Dashboard generator script
+    │   ├── dashboard.html          # Visual dashboard (generated, open in browser)
     │   └── scans/                  # Timestamped scan snapshots
-    └── [30 source PDFs]            # Original methodology documents
+    └── [source PDFs]               # Original methodology documents (optional)
 ```
 
 ## How the Skill Reads Its References
@@ -391,8 +394,10 @@ The signal database is the skill's persistent memory. Unlike regular Claude conv
 - **graph.json** maps how signals connect — which signals cluster into which drivers, and how signals relate to each other
 - **insights.json** holds automatically detected patterns — clusters, convergences, accelerations, contradictions, and blind spots
 - **scans/** preserves the full output of each scan session
+- **generate-dashboard.js** produces a visual HTML dashboard from the data
+- **dashboard.html** is the generated dashboard — open it in any browser to explore your signals visually with filterable tables, a network graph, strength charts, STEEP+V coverage, and an insights panel
 
-The database grows more valuable over time. After several scans across different domains, the automated analysis starts finding cross-domain patterns that no single scan would reveal.
+The database grows more valuable over time. After several scans across different domains, the automated analysis starts finding cross-domain patterns that no single scan would reveal. The visual dashboard makes these patterns immediately visible without needing to start a Claude conversation.
 
 ---
 
@@ -903,6 +908,74 @@ Once you have signals stored, you can query them in natural language:
 | "What are the blind spots in my coverage?" | STEEP+V gap analysis |
 
 You can query the database in any mode — it's not limited to Signal Scan.
+
+## The Visual Dashboard
+
+While you can always ask Claude to query the database conversationally, sometimes you want to browse, filter, and explore your signals visually. The skill includes an HTML dashboard generator that produces a self-contained, interactive page you open in any browser.
+
+### Generating the Dashboard
+
+After any database update, the skill regenerates the dashboard automatically by running:
+
+```bash
+node ~/.claude/commands/foresight/signals/generate-dashboard.js
+```
+
+You can also run this manually at any time. The output is a single file:
+
+```
+~/.claude/commands/foresight/signals/dashboard.html
+```
+
+Open it in any browser. No server needed — it's fully self-contained.
+
+### What the Dashboard Shows
+
+The dashboard is a dark-themed, single-page application with seven panels:
+
+**Stats Bar** — Total counts at a glance: signals, drivers, connections, insights, domains.
+
+**Strength Distribution** — Horizontal bar chart showing how many signals are at each strength level (early, emerging, accelerating, mainstream). Tells you at a glance whether your database is mostly early-stage scouting or tracking mature trends.
+
+**STEEP+V Coverage** — Bar chart of signal coverage across the six scanning categories (Social, Technological, Economic, Environmental, Political, Values). Categories with zero signals are highlighted in red as "BLIND SPOT" warnings. This is the fastest way to see where your foresight has systematic gaps.
+
+**Insights Panel** — Color-coded cards for each active insight from the automated analysis:
+- Green cards for cross-domain convergences
+- Orange cards for accelerations
+- Red cards for contradictions
+- Purple cards for proposed clusters
+- Cyan cards for emergences
+- Grey cards for decays
+- Yellow cards for coverage gaps
+
+**Drivers List** — All mapped drivers sorted by strength (dominant → strong → moderate → weak), showing signal count, STEEP+V category, and direction of change.
+
+**Signal Network Graph** — A force-directed network visualization:
+- **Blue nodes** (larger) = drivers, sized by how many signals they contain
+- **Colored nodes** (smaller) = signals, colored by strength (grey = early, yellow = emerging, orange = accelerating, green = mainstream)
+- **Lines** = connections between signals and their drivers
+- **Red lines** = contradiction relationships
+- Hover over any node to see its name
+
+The graph makes cluster structure and contradiction tensions visually obvious in a way that reading JSON never will.
+
+**Signal Timeline** — A chronological view of the most recent 30 signals, showing observation dates and strength badges. Useful for seeing the pace and recency of your scanning.
+
+**Signal Table** — The full database in a sortable, filterable table with:
+- **Search box** — free-text search across titles, descriptions, tags, and domains
+- **Strength filter** — dropdown to show only signals at a specific strength level
+- **Domain filter** — dropdown to show only signals in a specific domain
+- **Sortable columns** — click any column header to sort ascending/descending
+- Each row shows the signal's date, title, description preview, strength badge, domain chips, direction, tags, and source link
+
+### Two Ways to Interact with Your Signals
+
+| Method | Best for |
+|--------|----------|
+| **Conversational (via Claude)** | Complex queries ("What contradicts driver X?"), analysis ("What should I scan next?"), integration with other modes ("Use my stored signals to build scenarios") |
+| **Visual dashboard (browser)** | Browsing and exploring, checking coverage, spotting patterns visually, sharing the database state with colleagues, quick filtering |
+
+Both read from the same underlying JSON files. The dashboard is a read-only view — all writes happen through Claude during `/foresight` sessions.
 
 ## Signal Maintenance
 
@@ -1418,8 +1491,10 @@ For users who want continuous intelligence, `/foresight` can be combined with Cl
     │   ├── graph.json                # Driver graph + connections
     │   ├── insights.json             # Auto-detected patterns
     │   ├── index.md                  # Human-readable overview
+    │   ├── generate-dashboard.js     # Dashboard generator (Node.js)
+    │   ├── dashboard.html            # Visual dashboard (open in browser)
     │   └── scans/                    # Scan snapshots
-    └── [source PDFs]                 # Original methodology documents
+    └── [source PDFs]                 # Original methodology documents (optional)
 ```
 
 ## Signal Schema Reference
