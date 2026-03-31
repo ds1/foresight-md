@@ -35,7 +35,7 @@ Run the install script to copy all files to your Claude Code commands directory:
 
 ```bash
 # Clone the repo
-git clone https://github.com/danmannerma/foresight-md.git
+git clone https://github.com/ds1/foresight-md.git
 cd foresight-md
 
 # Run the install script
