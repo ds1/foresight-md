@@ -176,6 +176,7 @@ A persistent signal database lives at `~/.claude/commands/foresight/signals/`. R
 - **After producing signals**: save new signals to `database.json`, update `graph.json`, save scan snapshot to `signals/scans/`, update `signals/index.md`. Then **run the seven analysis passes** from `ref/signal-analysis.md` and write results to `signals/insights.json`. Surface newly detected patterns to the user.
 - **When building scenarios, forecasts, or memos**: query the database first. Use insights — contradictions as scenario axes, accelerations as forecast foundations, convergences as cross-domain opportunities. Cite stored signals by ID. Save new signals discovered during research.
 - **Signal aging**: flag signals >12 months without strength update. Suggest maintenance when unconfirmed clusters, stale signals, or coverage gaps accumulate.
+- **Dashboard**: After updating the database, regenerate the visual dashboard by running `node ~/.claude/commands/foresight/signals/generate-dashboard.js`. Tell the user they can open `~/.claude/commands/foresight/signals/dashboard.html` in a browser to explore their signals visually — filterable table, driver network graph, strength distribution, STEEP+V coverage, insights panel, and timeline.
 
 ### Action Orientation
 - Foresight without action is entertainment — always close the loop

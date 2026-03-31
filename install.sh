@@ -31,5 +31,18 @@ for f in database.json graph.json insights.json index.md; do
   fi
 done
 
+# Copy dashboard generator
+cp "$SCRIPT_DIR/skill/signals/generate-dashboard.js" "$CLAUDE_DIR/foresight/signals/generate-dashboard.js"
+echo "  Installed dashboard generator"
+
+# Generate initial dashboard
+if command -v node &> /dev/null; then
+  node "$CLAUDE_DIR/foresight/signals/generate-dashboard.js"
+  echo "  Generated dashboard.html"
+else
+  echo "  Note: Node.js not found. Install it to enable the visual dashboard."
+fi
+
 echo ""
 echo "Done. Type /foresight in Claude Code to get started."
+echo "Open ~/.claude/commands/foresight/signals/dashboard.html in a browser to view your signal database."

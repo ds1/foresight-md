@@ -4,6 +4,9 @@
 *.docx
 !foresight-skill-guide.pdf
 
+# Generated files
+skill/signals/dashboard.html
+
 # OS
 Thumbs.db
 .DS_Store
