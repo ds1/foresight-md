@@ -1,0 +1,12 @@
+# Original reference PDFs and source documents (not redistributable)
+*.pdf
+*.epub
+*.docx
+!foresight-skill-guide.pdf
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Node
+node_modules/
